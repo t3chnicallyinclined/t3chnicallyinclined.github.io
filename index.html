@@ -1,0 +1,488 @@
+<title>Tristan Rega</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+/* Layout: a status board — identity strip, live service grid, method panel, record. */
+:root{
+  --bg:#f6f7f9;
+  --panel:#ffffff;
+  --line:#dde1e8;
+  --fg:#15181e;
+  --muted:#5d6675;
+  --faint:#8b94a3;
+  --accent:#0d6f7a;        /* deep teal: links, rules, emphasis */
+  --accent-soft:#e3f0f1;
+  --ok:#2f7d4f;            /* semantic only: live / operational */
+  --ok-soft:#e4f1e9;
+  --bar:#9fbfc4;
+  --bar-hi:#0d6f7a;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1116; --panel:#161a21; --line:#272d37; --fg:#e8ebf0; --muted:#9aa4b4; --faint:#6b7585;
+    --accent:#4ec4d0; --accent-soft:#123034; --ok:#5fcc8d; --ok-soft:#142b1f;
+    --bar:#2f5a60; --bar-hi:#4ec4d0; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1116; --panel:#161a21; --line:#272d37; --fg:#e8ebf0; --muted:#9aa4b4; --faint:#6b7585;
+  --accent:#4ec4d0; --accent-soft:#123034; --ok:#5fcc8d; --ok-soft:#142b1f;
+  --bar:#2f5a60; --bar-hi:#4ec4d0; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:var(--sans); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:1000px; margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 56px;
+}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent}
+a:hover{border-bottom-color:currentColor}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+/* ---- identity strip ---- */
+header{padding-block:44px 28px; border-bottom:1px solid var(--line)}
+h1{
+  font-size:clamp(30px,6vw,44px); font-weight:700; letter-spacing:-.022em;
+  margin:0 0 6px; text-wrap:balance;
+}
+.role{font-size:clamp(15px,2.4vw,17px); color:var(--muted); margin:0 0 18px; max-width:62ch}
+.role b{color:var(--fg); font-weight:600}
+.ident{display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center;
+  font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.ident .sep{color:var(--faint)}
+
+/* ---- status bar ---- */
+.status{
+  display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+  padding-block:16px; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:12.5px;
+}
+.chip{display:inline-flex; align-items:center; gap:7px; color:var(--ok); font-weight:500}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--ok); flex:none;
+  box-shadow:0 0 0 3px var(--ok-soft)}
+@media (prefers-reduced-motion:no-preference){
+  .dot{animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--ok-soft)}50%{box-shadow:0 0 0 6px transparent}}
+}
+.status .meta{color:var(--faint)}
+.status .meta b{color:var(--muted); font-weight:500}
+
+/* ---- section headings ---- */
+h2{
+  font-family:var(--mono); font-size:11.5px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+  margin:40px 0 14px;
+}
+
+/* ---- service grid ---- */
+.grid{display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}
+.tile{
+  background:var(--panel); border:1px solid var(--line); border-radius:6px;
+  padding:16px 16px 14px; display:flex; flex-direction:column; gap:12px; min-width:0;
+}
+.tile-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; min-width:0}
+.tile-name{font-weight:600; font-size:15px; letter-spacing:-.01em; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tile-tag{font-family:var(--mono); font-size:10.5px; color:var(--faint); flex:none}
+.tile-blurb{font-size:13px; color:var(--muted); margin:0; min-width:0}
+.metrics{display:flex; flex-wrap:wrap; gap:4px 18px; font-family:var(--mono);
+  font-variant-numeric:tabular-nums}
+.metric{display:flex; flex-direction:column; gap:1px}
+.metric .n{font-size:19px; font-weight:600; letter-spacing:-.02em; line-height:1.1}
+.metric .k{font-size:10px; color:var(--faint); letter-spacing:.06em; text-transform:uppercase}
+.spark{display:flex; align-items:flex-end; gap:2px; height:26px; min-width:0}
+.spark i{flex:1 1 0; min-width:2px; background:var(--bar); border-radius:1px 1px 0 0; display:block}
+.spark i:last-child{background:var(--bar-hi)}
+.tile-foot{font-family:var(--mono); font-size:11px; color:var(--faint);
+  display:flex; justify-content:space-between; gap:10px; min-width:0}
+.tile-foot span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.live{color:var(--ok)}
+.stale{color:var(--faint)}
+
+/* ---- method ---- */
+.method{display:grid; gap:0; border:1px solid var(--line); border-radius:6px;
+  background:var(--panel); overflow:hidden}
+.method div{padding:13px 16px; border-bottom:1px solid var(--line); font-size:14.5px}
+.method div:last-child{border-bottom:0}
+.method b{font-weight:600}
+.method span{color:var(--muted)}
+
+/* ---- record ---- */
+.record{display:grid; gap:0; border-top:1px solid var(--line)}
+.row{display:grid; grid-template-columns:120px 1fr; gap:4px 24px;
+  padding-block:16px; border-bottom:1px solid var(--line); align-items:start}
+.row .when{font-family:var(--mono); font-size:12px; color:var(--faint); padding-top:3px;
+  font-variant-numeric:tabular-nums}
+.row .what h3{margin:0 0 3px; font-size:15.5px; font-weight:600; letter-spacing:-.01em}
+.row .what .org{font-size:13px; color:var(--muted); margin:0 0 7px}
+.row .what p{margin:0; font-size:14px; color:var(--muted); max-width:66ch}
+.row .what p + p{margin-top:7px}
+.row .what em{font-style:normal; color:var(--fg)}
+@media (max-width:560px){ .row{grid-template-columns:1fr; gap:2px} .row .when{padding-top:0} }
+
+/* ---- footer ---- */
+footer{margin-top:40px; padding-top:20px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center;
+  font-family:var(--mono); font-size:12px; color:var(--faint)}
+footer a{font-weight:500}
+.note{margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--faint); max-width:70ch}
+
+button.print{
+  font-family:var(--mono); font-size:12px; font-weight:500; color:var(--accent);
+  background:transparent; border:1px solid currentColor; border-radius:3px;
+  padding:3px 10px; cursor:pointer;
+}
+button.print:hover{background:var(--accent-soft)}
+button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.print-only{display:none}
+
+/* ---- printed / saved as PDF ---- */
+@media print{
+  :root{
+    --bg:#fff; --panel:#fff; --line:#c7cad0; --fg:#000; --muted:#2b2e33; --faint:#555b63;
+    --accent:#000; --accent-soft:#fff; --ok:#000; --ok-soft:#fff; --bar:#c2c6cb; --bar-hi:#6a7077;
+    color-scheme:light;
+  }
+  @page{margin:14mm}
+  body{background:#fff; color:#000; font-size:10.4pt; line-height:1.48}
+  .wrap{max-width:none; padding-block:0 0; padding-left:0; padding-right:0}
+  header{padding-block:0 12px}
+  h1{font-size:21pt}
+  .role{font-size:10.6pt; max-width:none}
+  h2{margin:16px 0 7px; font-size:9pt}
+  .status{padding-block:9px}
+  .dot{animation:none; box-shadow:none; background:#000}
+  .grid{grid-template-columns:repeat(2,1fr); gap:7px}
+  .tile{padding:10px 11px 9px; gap:8px}
+  .tile-blurb{font-size:9.4pt}
+  .metric .n{font-size:14pt}
+  .method div{padding:8px 11px; font-size:10pt}
+  .row{padding-block:11px}
+  .tile, .row, .method div, .spark{break-inside:avoid; page-break-inside:avoid}
+  h2{break-after:avoid; page-break-after:avoid}
+  a{color:#000; border-bottom:0}
+  .no-print{display:none !important}
+  .print-only{display:block}
+  footer{margin-top:18px; padding-top:10px}
+}
+</style>
+
+<div class="wrap">
+
+  <header>
+    <h1>Tristan Rega</h1>
+    <p class="role">Twenty years in infrastructure and enterprise support. Most recently
+      <b>first-line production support for around sixty banking clients</b> on a cloud-native core
+      banking platform, holding production on-call with break-glass access into regulated
+      environments. I build and run LLM systems on my own time, and that is the work I want more of.</p>
+    <div class="ident">
+      <span>Brooklyn, NY</span>
+      <span class="sep">/</span>
+      <a href="mailto:tristech@gmail.com">tristech@gmail.com</a>
+      <span class="sep">/</span>
+      <a href="https://github.com/t3chnicallyinclined">github.com/t3chnicallyinclined</a>
+      <span class="sep">/</span>
+      <a href="https://www.linkedin.com/in/tristech">linkedin.com/in/tristech</a>
+    </div>
+  </header>
+
+  <div class="status">
+    <span class="chip"><span class="dot"></span><span id="availability">Open to work</span></span>
+    <span class="meta">last push <b id="lastpush">—</b></span>
+    <span class="meta">tracked repositories <b id="repocount">6</b></span>
+    <span class="meta" id="source">reading github.com/t3chnicallyinclined…</span>
+  </div>
+
+  <h2>Shipping</h2>
+  <div class="grid" id="grid"></div>
+  <p class="note" id="note">Counts come from the GitHub REST API when you load this page: stars,
+    per-release asset downloads, and the date of the most recent release. Bars show downloads per
+    release, oldest to newest. If GitHub rate-limits your browser the page falls back to the last
+    figures I recorded, and says so.</p>
+
+  <h2>How I work</h2>
+  <div class="method">
+    <div><b>Start from what changed.</b> <span>Most breaks follow a change — a renewal, a rotation,
+      a deploy, an edited config. Evidence and documentation to an assumption, then confirm it
+      before anyone acts.</span></div>
+    <div><b>Cut scope until it can be tested.</b> <span>Two platforms I can test this week beat five
+      I can't.</span></div>
+    <div><b>Check what already exists before building it again.</b> <span>In our own stack first,
+      then outside it.</span></div>
+    <div><b>Do the cheap reversible thing first.</b> <span>The expensive safeguard waits until the
+      evidence asks for it.</span></div>
+    <div><b>Use real inputs, and change one thing at a time.</b></div>
+  </div>
+
+  <h2>The record</h2>
+  <div class="record">
+
+    <div class="row">
+      <div class="when">2021 — 2026</div>
+      <div class="what">
+        <h3>Cloud Support Engineer II</h3>
+        <p class="org">Thought Machine · cloud-native core banking</p>
+        <p>First-line production support for around sixty banking clients across vendor-hosted SaaS
+          and client self-hosted deployments. Shared queue, with internal subject-matter ownership
+          of a set of banks. Production on-call with break-glass authorisation, reaching client
+          environments through a bastion under approval-gated procedures. Provisioned client
+          staging, pre-production and production environments with Terraform on AWS and Google
+          Cloud. Diagnosed TLS certificate and SAML/SSO failures, Kubernetes configuration, and
+          client integration questions against the platform API.</p>
+        <p>I asked for more scope and major incident management was what was open. I gathered the
+          scattered internal practice into one framework, checked it against industry practice, and
+          <em>extended the existing severity and escalation model to cover majors</em> — declaration
+          criteria, role definitions, a RACI model. Then I built the automation behind it across
+          incident.io, Slack and Twilio, with per-incident Drive provisioning, wrote the Confluence
+          runbook and ran dry runs. Three stages of buy-in to executive sign-off.
+          <em>Live for fifty-plus on-call engineers across multiple teams.</em></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="when">2018 — 2021</div>
+      <div class="what">
+        <h3>Infrastructure Administrator / Cloud Architect</h3>
+        <p class="org">Graphite Financial · contract</p>
+        <p>The only technical person for a forty-person financial services firm. Designed and
+          executed their move to the cloud, end to end.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="when">2015 — 2018</div>
+      <div class="what">
+        <h3>Network Administrator / Senior Support Engineer</h3>
+        <p class="org">BuildingLink</p>
+        <p>Highest level of technical escalation for around twenty junior help desk engineers
+          supporting over four thousand customers, plus remote support to more than eight hundred
+          KeyLink customers. Implemented SSO for Google Cloud via Azure AD.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="when">2012 — 2015</div>
+      <div class="what">
+        <h3>Network Administrator</h3>
+        <p class="org">CSDNet</p>
+        <p>Administered a VMware vSphere pool of around three hundred virtual desktops and led their
+          conversion to thin clients, across a K-12 environment.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="when">2006 — 2010</div>
+      <div class="what">
+        <h3>Solutions Specialist / Network Analyst</h3>
+        <p class="org">CARR, a Xerox Company</p>
+        <p>Sat with businesses, asked enough questions to understand how their paperwork actually
+          moved, then proposed what to automate: document capture, OCR, routing, approval workflows.
+          Twenty years later that is still how I start anything — the hard part is rarely the build,
+          it is asking enough questions to know what should be built.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <button type="button" class="print no-print" id="printbtn">Print / Save as PDF</button>
+    <a href="https://github.com/t3chnicallyinclined">GitHub</a>
+    <a href="https://www.linkedin.com/in/tristech">LinkedIn</a>
+    <a href="mailto:tristech@gmail.com">tristech@gmail.com</a>
+    <span class="print-only" id="printstamp"></span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var USER = "t3chnicallyinclined";
+
+  // Fallbacks are the real figures recorded 2026-11-16, used only if GitHub refuses the browser.
+  var TRACKED = [
+    { repo: "GP2040-CE-NOBD", name: "NOBD firmware",
+      blurb: "Controller firmware fixing a dropped simultaneous two-button press at 1000 Hz polling. In use by competitive players.",
+      show: ["stars", "downloads", "releases"],
+      fb: { stars: 24, downloads: 1070, releases: 26, tag: "v0.7.12-nobd-29", at: "2026-11-16" } },
+
+    { repo: "nobd-desktop", name: "nobd-desktop",
+      blurb: "The same fix in software, so nobody has to flash firmware or buy a board. One Rust implementation covers Windows and Linux.",
+      show: ["downloads", "releases", "stars"],
+      fb: { stars: 3, downloads: 497, releases: 8, tag: "v0.7.1", at: "2026-09-02" } },
+
+    { repo: "supergun-releases", name: "SUPERGUN",
+      blurb: "Rollback-netcode arcade shell: a lifted game running on Pi, desktop and WebAssembly from the player's own files.",
+      show: ["releases", "downloads"],
+      fb: { stars: 0, downloads: 0, releases: 36, tag: "", at: "2026-09-15" } },
+
+    { repo: "mvc2-oracle", name: "mvc2-oracle",
+      blurb: "Live memory reading for a 2000-era arcade title: reverse-engineered struct layout, read from a running process.",
+      show: ["stars", "releases"],
+      fb: { stars: 3, downloads: 0, releases: 0, tag: "", at: "2026-09-02" } },
+
+    { repo: "ai-visualized", name: "AI Visualized",
+      blurb: "Six real language models running in a browser with every number on screen. Built because the gap between what people think these systems do and what they do is what stalls adoption.",
+      show: ["releases", "stars"],
+      fb: { stars: 0, downloads: 0, releases: 0, tag: "", at: "2026-11-11" } },
+
+    { repo: "mvc2-skin-studio", name: "mvc2-skin-studio",
+      blurb: "Sprite and palette tooling built on the same reverse-engineering work, packaged for people who are not engineers.",
+      show: ["stars", "releases"],
+      fb: { stars: 2, downloads: 0, releases: 0, tag: "", at: "2026-07-25" } }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var fmt = function (n) { return Number(n).toLocaleString("en-US"); };
+
+  function ago(iso) {
+    if (!iso) return "";
+    var then = new Date(iso).getTime();
+    if (!isFinite(then)) return "";
+    var d = Math.floor((Date.now() - then) / 86400000);
+    if (d <= 0) return "today";
+    if (d === 1) return "yesterday";
+    if (d < 31) return d + " days ago";
+    var m = Math.round(d / 30.44);
+    if (m < 24) return m + (m === 1 ? " month ago" : " months ago");
+    return Math.round(d / 365.25) + " years ago";
+  }
+
+  function onDate(iso) {
+    if (!iso) return "";
+    var dt = new Date(iso);
+    if (isNaN(dt.getTime())) return "";
+    return dt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
+
+  function json(url) {
+    return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
+  // Render immediately from fallbacks so the page is complete at rest, then upgrade in place.
+  function render(items, live) {
+    $("grid").innerHTML = items.map(function (t) {
+      var d = t.data;
+      var cells = t.show.map(function (k) {
+        if (k === "stars") {
+          if (!d.stars) return "";
+          return '<div class="metric"><span class="n">' + fmt(d.stars) +
+                 '</span><span class="k">stars</span></div>';
+        }
+        if (k === "downloads") {
+          if (!d.downloads) return "";
+          return '<div class="metric"><span class="n">' + fmt(d.downloads) +
+                 '</span><span class="k">downloads</span></div>';
+        }
+        if (!d.releases) return "";
+        return '<div class="metric"><span class="n">' + fmt(d.releases) +
+               '</span><span class="k">releases</span></div>';
+      }).join("");
+
+      var spark = "";
+      if (d.series && d.series.length > 1) {
+        var max = Math.max.apply(null, d.series) || 1;
+        spark = '<div class="spark" aria-hidden="true">' + d.series.map(function (v) {
+          return '<i style="height:' + Math.max(8, Math.round((v / max) * 100)) + '%"></i>';
+        }).join("") + "</div>";
+      }
+
+      var right = d.tag ? esc(d.tag) : (d.at ? "updated" : "");
+      return '<article class="tile">' +
+        '<div class="tile-head"><span class="tile-name">' + esc(t.name) + '</span>' +
+        '<span class="tile-tag">' + right + "</span></div>" +
+        '<p class="tile-blurb">' + esc(t.blurb) + "</p>" +
+        (cells ? '<div class="metrics">' + cells + "</div>" : "") +
+        spark +
+        '<div class="tile-foot"><span>' +
+          (d.at ? (d.tag ? "released " : "pushed ") + onDate(d.at) : "") +
+        '</span><a href="https://github.com/' + USER + "/" + esc(t.repo) + '">' +
+          esc(t.repo) + "</a></div>" +
+        "</article>";
+    }).join("");
+
+    $("repocount").textContent = items.length;
+    $("source").innerHTML = live
+      ? '<span class="live">live from the GitHub API</span>'
+      : '<span class="stale">GitHub unavailable — showing figures recorded 16 Nov 2026</span>';
+  }
+
+  var items = TRACKED.map(function (t) {
+    return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show,
+             data: { stars: t.fb.stars, downloads: t.fb.downloads, releases: t.fb.releases,
+                     tag: t.fb.tag, at: t.fb.at, series: null } };
+  });
+  render(items, false);
+  $("lastpush").textContent = ago("2026-11-16");
+  $("built").textContent = "";
+
+  json("https://api.github.com/users/" + USER + "/repos?per_page=100&sort=pushed")
+    .then(function (repos) {
+      var by = {};
+      repos.forEach(function (r) { by[r.name] = r; });
+
+      var newest = null;
+      repos.forEach(function (r) {
+        if (!newest || new Date(r.pushed_at) > new Date(newest)) newest = r.pushed_at;
+      });
+      if (newest) $("lastpush").textContent = ago(newest);
+
+      return Promise.all(items.map(function (it) {
+        var r = by[it.repo];
+        if (r) { it.data.stars = r.stargazers_count; it.data.at = r.pushed_at; it.data.tag = ""; }
+        return json("https://api.github.com/repos/" + USER + "/" + it.repo + "/releases?per_page=100")
+          .then(function (rels) {
+            if (!Array.isArray(rels) || !rels.length) return it;
+            var chrono = rels.slice().reverse();
+            var total = 0, series = [];
+            chrono.forEach(function (rel) {
+              var n = (rel.assets || []).reduce(function (a, b) { return a + (b.download_count || 0); }, 0);
+              total += n; series.push(n);
+            });
+            it.data.releases = rels.length;
+            it.data.downloads = total;
+            it.data.tag = rels[0].tag_name || "";
+            it.data.at = rels[0].published_at || it.data.at;
+            if (total > 0) it.data.series = series.slice(-24);
+            return it;
+          })
+          .catch(function () { return it; });
+      }));
+    })
+    .then(function () { render(items, true); })
+    .catch(function () { /* fallbacks already on screen, and labelled */ });
+
+  // Print / Save as PDF. The stamp dates the printed copy, so a saved PDF says how current it is.
+  function stamp() {
+    var el = $("printstamp");
+    if (!el) return;
+    el.textContent = "Printed " + new Date().toLocaleDateString("en-US",
+      { year: "numeric", month: "long", day: "numeric" }) +
+      " · live figures from github.com/" + USER + " · tristech@gmail.com";
+  }
+  stamp();
+  window.addEventListener("beforeprint", stamp);
+  var pb = $("printbtn");
+  if (pb) pb.addEventListener("click", function () { window.print(); });
+})();
+</script>
