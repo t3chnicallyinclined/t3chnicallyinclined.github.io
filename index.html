@@ -210,6 +210,29 @@ h1 .blk{
 .what p + p{margin-top:8px}
 .what em{font-style:normal; color:var(--fg)}
 
+/* ---- floorplan panel ---- */
+dialog.fp{
+  width:min(1120px, calc(100vw - 24px)); height:min(92vh, calc(100dvh - 24px)); max-width:none; max-height:none;
+  padding:0; border:1px solid var(--line); border-radius:18px; background:var(--panel); color:var(--fg);
+  overflow:hidden; display:none; flex-direction:column;
+}
+dialog.fp[open]{display:flex}
+dialog.fp::backdrop{background:rgba(8,9,6,.55); backdrop-filter:blur(3px)}
+.fp-bar{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; padding:12px 16px; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.fp-bar strong{font-family:var(--display); font-size:18px; font-weight:700; color:var(--fg); letter-spacing:-.01em}
+.fp-kicker{letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+.fp-actions{margin-left:auto; display:flex; gap:12px; align-items:center}
+.fp-close{font:inherit; color:var(--accent-ink); background:var(--accent); border:0; border-radius:999px; padding:5px 12px; cursor:pointer; font-weight:600}
+#fp-frame{flex:1 1 auto; width:100%; border:0; background:var(--bg)}
+@media screen and (prefers-reduced-motion:no-preference){
+  dialog.fp[open]{animation:fp-open .32s cubic-bezier(.2,.75,.2,1) both; transform-origin:var(--ox,50%) var(--oy,50%)}
+  dialog.fp[open]::backdrop{animation:fp-fade .32s ease both}
+  @keyframes fp-open{from{opacity:0; transform:scale(.6)}to{opacity:1; transform:none}}
+  @keyframes fp-fade{from{opacity:0}to{opacity:1}}
+}
+@media print{ dialog.fp{display:none !important} }
+
 /* ---- footer ---- */
 footer{
   margin-top:clamp(34px,6vw,60px);
@@ -424,6 +447,18 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
 
 </div>
 
+<dialog class="fp" id="fp" aria-labelledby="fp-title">
+  <div class="fp-bar">
+    <span class="fp-kicker">Floorplan</span>
+    <strong id="fp-title"></strong>
+    <span class="fp-actions">
+      <a id="fp-open" href="floorplan.html" target="_blank" rel="noopener">open in a new tab ↗</a>
+      <button type="button" class="fp-close" id="fp-close" aria-label="Close floorplan">close ✕</button>
+    </span>
+  </div>
+  <iframe id="fp-frame" title="Repository floorplan" loading="lazy"></iframe>
+</dialog>
+
 <script>
 (function () {
   "use strict";
@@ -526,8 +561,8 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       '<div class="t-foot"><span>' +
         (d.at ? (d.tag ? "released " : "pushed ") + onDate(d.at) : "") +
       '</span><span class="t-links">' +
-        (it.plan ? '<a href="https://github.com/' + USER + "/" + esc(it.repo) + "/blob/" + esc(it.plan) +
-                   '/docs/FLOORPLAN.md" title="How this repository is laid out">floorplan</a>' : "") +
+        (it.plan ? '<a href="floorplan.html#' + esc(it.repo) + '" data-fp="' + esc(it.repo) +
+                   '" data-fp-name="' + esc(it.name) + '" title="How this repository is laid out">floorplan</a>' : "") +
         (it.site
           ? '<a href="' + esc(it.site) + '">' + esc(it.site.replace(/^https?:\/\//, "")) + " ↗</a>"
           : '<a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' + esc(it.repo) + " ↗</a>") +
@@ -642,6 +677,32 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
   }
   tick();
   setInterval(tick, 30000);
+
+  // ---- floorplan: the tile's link expands into a panel over the page ----
+  var fp = $("fp"), fpFrame = $("fp-frame");
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[data-fp]");
+    if (!a || !fp || typeof fp.showModal !== "function") return;   // no dialog support: follow the link
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;  // new tab, as asked
+    e.preventDefault();
+    var tile = a.closest(".tile");
+    if (tile) {
+      // Grow out of the tile: the origin is the tile's centre, measured from where the panel will sit.
+      var r = tile.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+      var w = Math.min(1120, vw - 24), h = Math.min(vh * 0.92, vh - 24);
+      fp.style.setProperty("--ox", Math.round(r.left + r.width / 2 - (vw - w) / 2) + "px");
+      fp.style.setProperty("--oy", Math.round(r.top + r.height / 2 - (vh - h) / 2) + "px");
+    }
+    $("fp-title").textContent = a.getAttribute("data-fp-name");
+    $("fp-open").href = a.getAttribute("href");
+    fpFrame.src = a.getAttribute("href");
+    fp.showModal();
+  });
+  if (fp) {
+    $("fp-close").addEventListener("click", function () { fp.close(); });
+    fp.addEventListener("click", function (e) { if (e.target === fp) fp.close(); });   // backdrop
+    fp.addEventListener("close", function () { fpFrame.src = "about:blank"; });
+  }
 
   // ---- theme: follows the system until the reader chooses ----
   var root = document.documentElement;
