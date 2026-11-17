@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tristan Rega Resume</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  @page { size: Letter; margin: 0.42in 0.5in; }
+  *{ box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Source Sans 3", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 10.9pt; line-height: 1.37; color: #1a1a1a; background: #fff;
+    max-width: 7.6in; margin: 0 auto; padding: 0.55in 0.3in;
+    font-variant-numeric: tabular-nums;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-end;
+           gap: 1.5em; margin-bottom: .9em; padding-bottom: .45em;
+           border-bottom: 1.6px solid #1a1a1a; }
+  h1 { font-family: "Source Serif 4", Georgia, serif;
+       font-size: 25pt; font-weight: 600; letter-spacing: .005em; margin: 0;
+       white-space: nowrap; line-height: 1; }
+  .contact { text-align: right; font-size: 9.9pt; line-height: 1.5; color: #333; }
+  .contact a { color: #333; text-decoration: none; }
+  h2 { font-family: "Source Serif 4", Georgia, serif;
+       font-size: 12pt; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+       margin: .92em 0 .36em; padding-bottom: .14em; border-bottom: .8px solid #b9b9b9; }
+  h3 { font-size: 11.5pt; font-weight: 700; margin: .68em 0 .06em; letter-spacing: -.005em; }
+  h3:first-of-type { margin-top: .25em; }
+  .meta { display: flex; justify-content: space-between; gap: 1em;
+          font-size: 10.2pt; color: #444; margin-bottom: .2em; }
+  .org { font-style: italic; }
+  .dates { white-space: nowrap; font-weight: 600; color: #1a1a1a; }
+  .context { font-size: 10.1pt; font-style: italic; color: #555; margin: .18em 0 .5em; }
+  .sub { font-size: 10.2pt; font-weight: 700; margin: .6em 0 .2em; letter-spacing: .02em; color: #262626; }
+  p { margin: .3em 0; }
+  ul { margin: .12em 0 .26em; padding-left: 1.02em; }
+  li { margin-bottom: .16em; }
+  li::marker { color: #888; }
+  b, strong { font-weight: 600; }
+  a { color: #1a1a1a; }
+  .skill { margin: .26em 0; }
+  .earlier { font-size: 10.5pt; margin: .18em 0 .3em; }
+  .interests { font-size: 9.7pt; color: #333; }
+  h2, h3, .sub { break-after: avoid; page-break-after: avoid; }
+  .meta, .context { break-inside: avoid; page-break-inside: avoid; }
+  /* Let a long bullet split across a page rather than jumping whole and
+     leaving dead space; two lines must stay together on each side. */
+  li { orphans: 2; widows: 2; }
+  ul { break-inside: auto; page-break-inside: auto; }
+  @media print {
+    body { padding: 0; max-width: none; font-size: 10.1pt; line-height: 1.26; }
+    h1 { font-size: 22pt; }
+    h2 { font-size: 11pt; margin: .62em 0 .26em; }
+    h3 { font-size: 10.9pt; margin: .46em 0 .04em; }
+    header { margin-bottom: .6em; padding-bottom: .3em; }
+    .sub { margin: .4em 0 .14em; }
+    ul { margin: .08em 0 .18em; }
+    li { margin-bottom: .1em; }
+    .context { margin: .1em 0 .34em; }
+    .skill { margin: .18em 0; }
+    p { margin: .22em 0; }
+  }
+
+  .sitebar { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
+    justify-content: space-between; margin: 0 0 18px; padding: 0 0 12px;
+    border-bottom: 1px solid #d8d6ca; color: #565849; }
+  .sitebar a { color: inherit; }
+  .sitebar button { font: inherit; cursor: pointer; color: #14150f; background: #c6f432;
+    border: 0; border-radius: 999px; padding: 6px 14px; font-weight: 600; }
+  @media print { .sitebar { display: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="sitebar">
+  <a href="./">&larr; t3chnicallyinclined.github.io</a>
+  <span id="livenote">figures as recorded</span>
+  <button type="button" id="printbtn">Print / Save as PDF</button>
+</div>
+
+<header>
+  <h1>Tristan Rega</h1>
+  <div class="contact">
+    Brooklyn, NY<br>
+    <a href="mailto:tristech@gmail.com">tristech@gmail.com</a><br>
+    <a href="https://www.linkedin.com/in/tristech">linkedin.com/in/tristech</a>
+  </div>
+</header>
+
+<h2>Profile</h2>
+<p>Twenty years in infrastructure and enterprise support. Most recently on the first-line support team for around sixty banking clients on a cloud-native core banking platform, covering vendor-hosted and self-hosted deployments, holding production on-call with break-glass access into regulated environments, and provisioning client environments across AWS and Google Cloud. I asked for more scope; major incident management was open and unowned, so I took it, pulled the scattered practice into one framework, built the automation behind it, and saw it adopted across fifty-plus on-call engineers. Before that I was the only technical person at a financial services firm, where I designed and ran their move to the cloud.</p>
+<p>Alongside that I build and operate production LLM systems, and it is the work I want more of: multi-model pipelines, agent orchestration with automatic quality checks, retrieval over graph and vector stores, content-safety guardrails, and the cost engineering that keeps an expensive model out of the stages that do not need one. What I know about where they fail, I learned by breaking them and working out why.</p>
+
+<h2>Core Skills</h2>
+<div class="skill"><b>AI / LLM Systems</b>: LLM application architecture · multi-model routing and provider abstraction · retrieval-augmented generation · structured output with validation and retry · agent orchestration and context management · programmatic quality gates · content-safety guardrails · usage metering · production failure modes: context degradation, goal drift, silent incorrectness</div>
+<div class="skill"><b>Cloud &amp; Platform</b>: AWS · GCP · Azure · Kubernetes · Docker · Terraform · Istio · HashiCorp Vault · Linux (Ubuntu/Debian) · Prometheus · Grafana · ELK/EFK · CI/CD pipelines · shell scripting · basic SQL</div>
+<div class="skill"><b>Enterprise Support &amp; Escalation</b>: Priority and escalated client support · major incident management · escalation path and severity design · incident client communications · evidence and timeline gathering for root cause analysis · 24/7 follow-the-sun coverage · production on-call with break-glass authorization · embedded client-channel support</div>
+<div class="skill"><b>Diagnosis</b>: Platform API documentation · error and log investigation · Kubernetes pod logs, debug pods and configuration · metrics analysis · SSL/TLS certificates · SAML/SSO authentication flows</div>
+<div class="skill"><b>Identity &amp; Access</b>: SAML · SSO · OIDC · OAuth 2.0 (Authorization Code + PKCE) · JWT/JWKS validation · Keycloak · Azure AD · FreeRADIUS · 2FA/MFA</div>
+
+<h2>Professional Experience</h2>
+
+<h3>Cloud Support Engineer II</h3>
+<div class="meta"><span class="org">Thought Machine, New York, NY</span><span class="dates">April 2021 – August 2026</span></div>
+<div class="context">Cloud-native core banking platform (Vault), delivered as hosted SaaS and bank-hosted deployments to enterprise banks.</div>
+
+<div class="sub">Enterprise client support</div>
+<ul>
+  <li>Production support across ~60 banking clients, Tier 1 to Tier 3, in both vendor-hosted and client self-hosted deployments: first-line triage, diagnosis and resolution across proprietary application software and cloud infrastructure, escalating to on-call engineering where needed.</li>
+  <li>Worked a shared queue while serving as assigned subject-matter expert for a specific set of banks, building durable knowledge of their architecture and integrations and acting as an embedded contact inside their channels. Worked daily in the platform's API documentation, answering integration and configuration questions with specifics rather than from a script.</li>
+  <li>Diagnosed and resolved client authentication and connectivity failures, most commonly SSL/TLS certificate and SAML/SSO issues, across enterprise deployments.</li>
+  <li>Troubleshot client environments directly in Kubernetes: reading pod logs, deploying debug pods and editing configuration. Resolved issues in pre-production where there was time to work them, and escalated fast in production where there wasn't.</li>
+  <li>Held production on-call with break-glass authorization, reaching client SaaS environments through a remote bastion under approval-gated procedures, trusted with privileged production access across regulated banking environments.</li>
+  <li>Supported high-priority incident response: gathered the logs, timeline and client-impact detail engineering worked from and that fed the root cause analyses, handled client communications, and coordinated the process through a multi-region 24/7 follow-the-sun rotation with clean handover across time zones.</li>
+</ul>
+
+<div class="sub">Major incident management, consolidated the framework</div>
+<ul>
+  <li>Asked for more scope; major incident management was open and unowned, so I took it and consolidated it into one coherent framework: gathered scattered internal practice, reconciled it against industry best practice, and extended the company's existing severity and escalation model to cover major incidents, adding declaration criteria and role ownership adapted from an existing RACI.</li>
+  <li>Drove it to adoption without formal authority: gathered input from the immediate team, circulated it to the wider engineering organization for comment, and secured executive sign-off. Live for 50+ on-call engineers across multiple teams.</li>
+  <li>Built the supporting automation across incident.io, Slack and Twilio: a P0/P1 escalation triggers a bot-driven major incident declaration, broadcasts to a company-wide watch channel, pages the wider on-call team, and provisions a dedicated Google Drive per incident. It replaced a thin process under which long-running incidents lost context across regional handovers and Slack history was deleted outright.</li>
+  <li>Wrote the runbook and ran the rollout: validated the automation through dry runs and published the operating flow to Confluence as the working reference for engineers in a major incident. Contributed to the support knowledge base throughout, symptoms, root cause and remediation per entry, plus Confluence guides for recurring procedures such as standing up a customer environment.</li>
+</ul>
+
+<div class="sub">Environments, tooling and mentoring</div>
+<ul>
+  <li>Provisioned and configured client environments in AWS and Google Cloud: staging, pre-production and production, using Terraform recipes, onboarding and scaling banking clients onto the platform.</li>
+  <li>Investigated client issues through the platform's observability stack, Prometheus, Alertmanager and ELK dashboards, tracing symptoms and gathering the evidence engineering needed. Mentored new cloud engineers as the designated onboarding buddy, and contributed to hiring by grading take-home assessments and giving structured interview feedback.</li>
+</ul>
+
+<h3>Infrastructure Administrator / Cloud Architect</h3>
+<div class="meta"><span class="org">Graphite Financial, New York, NY · Contract</span><span class="dates">October 2018 – January 2021</span></div>
+<ul>
+  <li>Architected and executed the migration to the cloud, replacing local desktops with secure virtual desktops on AWS WorkSpaces and Directory Service, cutting VDI implementation cost by 60%.</li>
+  <li>Designed multi-region redundancy across AWS VPCs and Availability Zones, and integrated FreeRADIUS with AWS to put every employee behind 2FA/MFA.</li>
+  <li>Introduced the company's first cyber security policy: they had none, adapting an industry-standard framework to their actual workflows as part of preparing for SOC 2 certification.</li>
+  <li>Ran a ~40-user Office 365 to GSuite migration and administered the wider application estate. Sole IT and cloud engineer for the firm, the escalation point for everything from a laptop to the AWS account.</li>
+</ul>
+
+<h2>Selected Projects</h2>
+<p>Independent engineering &middot; January 2024 &ndash; present. Run in production, with users who are not me.</p>
+<ul>
+  <li><b>autoseo</b>: an automated podcast-to-clips pipeline in Rust with a React dashboard, in daily use by its owner. Built around cost: local processing narrows candidates before any hosted model is called, and one batched ranking call covers all survivors. Posts to YouTube, Bluesky and Instagram Reels, tracking real API cost per job.</li>
+  <li><b>NOBD</b>: at 1000Hz USB polling two fingers land 2 to 8 ms apart, and when that gap straddles the sampling boundary the game reads two presses instead of one chord. Fixed first as controller firmware (<span data-live="fw-stars">24</span> stars, <span data-live="fw-dl">1,070</span> downloads across <span data-live="fw-rel">26</span> releases, in use by competitive players), differential-proved against the existing firmware before shipping; then as nobd-desktop, the same fix in software so nobody needs to flash firmware or buy a board (<span data-live="dt-dl">497</span> downloads, <span data-live="dt-rel">8</span> releases). One Rust implementation covers Windows and Linux.</li>
+  <li><b>Retro Receipts</b>: a live match-tracking platform in daily use by competitive players, on a Kubernetes cluster I provision and harden. Two Rust services, a SvelteKit PWA and a signed cross-platform release pipeline. Reading live match state meant reverse-engineering the game's memory layout with no prior experience in it.</li>
+</ul>
+
+<h2>Earlier Experience</h2>
+<h3>Network Administrator / Senior Support Engineer</h3>
+<div class="meta"><span class="org">BuildingLink, New York, NY</span><span class="dates">November 2015 – October 2018</span></div>
+<ul>
+  <li>Highest level of technical escalation for a team of ~20 junior help desk engineers supporting over 4,000 customers, plus expert remote support to over 800 KeyLink customers.</li>
+  <li>Implemented SSO for Google Cloud via Azure AD; administered Azure Active Directory, Office 365 and Exchange 2016. Monitored firewalls and anti-virus, and investigated security incidents.</li>
+</ul>
+
+<h3>Network Administrator</h3>
+<div class="meta"><span class="org">CSDNet, Manhasset, NY</span><span class="dates">September 2012 – August 2015</span></div>
+<ul>
+  <li>Administered a VMware vSphere pool of ~300 virtual desktops and led their conversion to thin clients. Managed Exchange, Active Directory and Group Policy across a K-12 environment and supervised two junior technicians.</li>
+</ul>
+
+<h3>Solutions Specialist / Network Analyst</h3>
+<div class="meta"><span class="org">CARR, a Xerox Company, Melville, NY</span><span class="dates">December 2006 – February 2010</span></div>
+<p class="earlier">
+Solutions work with business clients: understanding how a company's workflows actually ran, then proposing and implementing what to automate. Enterprise application management across three offices.</p>
+
+
+<h2>Education &amp; Certifications</h2>
+<p>Kingsborough Community College, Computer Information Systems, 1998–1999 &nbsp;·&nbsp; Kubernetes: CKA, CKAD and CKS all in progress &nbsp;·&nbsp; Vault Fundamentals, Thought Machine, 2024</p>
+
+
+
+<script>
+(function () {
+  "use strict";
+  var API = "https://api.github.com/repos/t3chnicallyinclined/";
+  function set(key, n) {
+    var el = document.querySelector('[data-live="' + key + '"]');
+    if (el && isFinite(n) && n > 0) el.textContent = Number(n).toLocaleString("en-US");
+  }
+  function json(url) {
+    return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+  }
+  function releases(repo, dlKey, relKey) {
+    return json(API + repo + "/releases?per_page=100").then(function (rels) {
+      var total = 0;
+      rels.forEach(function (rel) {
+        (rel.assets || []).forEach(function (a) { total += a.download_count || 0; });
+      });
+      set(dlKey, total); set(relKey, rels.length);
+    });
+  }
+  Promise.all([
+    json(API + "GP2040-CE-NOBD").then(function (r) { set("fw-stars", r.stargazers_count); }),
+    releases("GP2040-CE-NOBD", "fw-dl", "fw-rel"),
+    releases("nobd-desktop", "dt-dl", "dt-rel")
+  ]).then(function () {
+    var n = document.getElementById("livenote");
+    if (n) n.textContent = "NOBD figures live from the GitHub API";
+  }).catch(function () { /* the recorded figures are already on the page */ });
+
+  var pb = document.getElementById("printbtn");
+  if (pb) pb.addEventListener("click", function () { window.print(); });
+})();
+</script>
+</body>
+</html>
