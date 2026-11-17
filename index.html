@@ -1,215 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tristan Rega</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tristan Rega. Infrastructure and enterprise support, Brooklyn NY. Live figures for the things I ship, read from the GitHub API.">
+<meta property="og:title" content="Tristan Rega">
+<meta property="og:description" content="Infrastructure and enterprise support. Live figures for the things I ship, read from the GitHub API.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://t3chnicallyinclined.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0c09'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%23c6f432'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap">
 
 <style>
-/* Layout: a status board — identity strip, live service grid, record. */
+/* Layout: top bar, oversized name, a bento grid of live repository tiles, a dated record. */
 :root{
-  --bg:#f6f7f9;
-  --panel:#ffffff;
-  --line:#dde1e8;
-  --fg:#15181e;
-  --muted:#5d6675;
-  --faint:#8b94a3;
-  --accent:#0d6f7a;        /* deep teal: links, rules, emphasis */
-  --accent-soft:#e3f0f1;
-  --ok:#2f7d4f;            /* semantic only: live / operational */
-  --ok-soft:#e4f1e9;
-  --bar:#9fbfc4;
-  --bar-hi:#0d6f7a;
-  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#f2f1ea;
+  --panel:#fbfaf5;
+  --line:#d8d6ca;
+  --fg:#14150f;
+  --muted:#565849;
+  --faint:#85877a;
+  --accent:#c6f432;          /* fills only: chip, cursor block, newest bar */
+  --accent-ink:#14150f;      /* text on an accent fill */
+  --link:#3d5800;
+  --mark:#c6f432;            /* marker stroke under emphasised words */
+  --ok:#2e7a3f;
+  --bar:#cfcdbf;
+  --dot:rgba(20,21,15,.11);
+  --glow:rgba(150,190,20,.20);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0e1116; --panel:#161a21; --line:#272d37; --fg:#e8ebf0; --muted:#9aa4b4; --faint:#6b7585;
-    --accent:#4ec4d0; --accent-soft:#123034; --ok:#5fcc8d; --ok-soft:#142b1f;
-    --bar:#2f5a60; --bar-hi:#4ec4d0; color-scheme:dark;
+    --bg:#0b0c09; --panel:#12140f; --line:#272a20; --fg:#edece4; --muted:#a3a595; --faint:#6e7062;
+    --accent:#c6f432; --accent-ink:#0b0c09; --link:#c6f432; --mark:rgba(198,244,50,.26);
+    --ok:#7ee08f; --bar:#30342a; --dot:rgba(237,236,228,.09); --glow:rgba(198,244,50,.10);
+    color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0e1116; --panel:#161a21; --line:#272d37; --fg:#e8ebf0; --muted:#9aa4b4; --faint:#6b7585;
-  --accent:#4ec4d0; --accent-soft:#123034; --ok:#5fcc8d; --ok-soft:#142b1f;
-  --bar:#2f5a60; --bar-hi:#4ec4d0; color-scheme:dark;
+  --bg:#0b0c09; --panel:#12140f; --line:#272a20; --fg:#edece4; --muted:#a3a595; --faint:#6e7062;
+  --accent:#c6f432; --accent-ink:#0b0c09; --link:#c6f432; --mark:rgba(198,244,50,.26);
+  --ok:#7ee08f; --bar:#30342a; --dot:rgba(237,236,228,.09); --glow:rgba(198,244,50,.10);
+  color-scheme:dark;
 }
 
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{
-  background:var(--bg); color:var(--fg);
-  font-family:var(--sans); font-size:15px; line-height:1.55;
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--sans); font-size:15.5px; line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(var(--dot) 1px,transparent 1.4px) 0 0/22px 22px;
+  -webkit-mask-image:linear-gradient(#000,transparent 78%);
+          mask-image:linear-gradient(#000,transparent 78%);
+}
 .wrap{
-  max-width:1000px; margin:0 auto;
+  max-width:1120px; margin:0 auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:0 56px;
+  padding-block:0 64px;
 }
-a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent}
-a:hover{border-bottom-color:currentColor}
-a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+a{color:var(--link); text-decoration:none}
+a:hover{text-decoration:underline; text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--link); outline-offset:3px; border-radius:4px}
+::selection{background:var(--accent); color:var(--accent-ink)}
 
-/* ---- identity strip ---- */
-header{padding-block:44px 28px; border-bottom:1px solid var(--line)}
+/* ---- top bar ---- */
+.topbar{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 18px;
+  padding-block:18px; font-family:var(--mono); font-size:12.5px; color:var(--muted);
+}
+.topbar .left,.topbar .right{display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px}
+.handle{color:var(--fg); font-weight:500}
+.chip{
+  display:inline-flex; align-items:center; gap:7px; padding:4px 11px 4px 9px; border-radius:999px;
+  background:var(--accent); color:var(--accent-ink); font-weight:600;
+}
+.chip i{width:7px; height:7px; border-radius:50%; background:var(--accent-ink); display:block}
+.ghost{
+  font:inherit; color:var(--muted); background:transparent; cursor:pointer;
+  border:1px solid var(--line); border-radius:999px; padding:4px 11px;
+}
+.ghost:hover{color:var(--fg); border-color:var(--faint)}
+
+/* ---- name ---- */
+header{padding-block:clamp(28px,7vw,72px) clamp(26px,5vw,48px)}
 h1{
-  font-size:clamp(30px,6vw,44px); font-weight:700; letter-spacing:-.022em;
-  margin:0 0 6px; text-wrap:balance;
+  font-family:var(--display); font-weight:800; font-variation-settings:"opsz" 96;
+  font-size:clamp(56px,14.6vw,172px); line-height:.86; letter-spacing:-.05em;
+  margin:0 0 clamp(20px,3.4vw,36px);
 }
-.role{font-size:clamp(15px,2.4vw,17px); color:var(--muted); margin:0 0 18px; max-width:62ch}
-.role b{color:var(--fg); font-weight:600}
-.ident{display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center;
-  font-family:var(--mono); font-size:12.5px; color:var(--muted)}
-.ident .sep{color:var(--faint)}
+h1 .blk{
+  display:inline-block; width:.17em; height:.17em; margin-left:.05em;
+  background:var(--accent); border-radius:.02em;
+}
+.role{
+  font-size:clamp(17px,2.2vw,21px); line-height:1.45; color:var(--muted);
+  margin:0 0 24px; max-width:60ch; text-wrap:pretty;
+}
+.role b{color:var(--fg); font-weight:500; box-shadow:inset 0 -.42em 0 var(--mark)}
+.links{display:flex; flex-wrap:wrap; gap:8px; font-family:var(--mono); font-size:12.5px}
+.links a{
+  color:var(--fg); border:1px solid var(--line); border-radius:999px; padding:6px 13px;
+  background:var(--panel);
+}
+.links a:hover{text-decoration:none; border-color:var(--fg)}
 
-/* ---- status bar ---- */
-.status{
-  display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
-  padding-block:16px; border-bottom:1px solid var(--line);
-  font-family:var(--mono); font-size:12.5px;
+/* ---- section heads ---- */
+.sec{
+  display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 16px;
+  margin:clamp(34px,6vw,60px) 0 14px; padding-bottom:10px; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:12px; color:var(--faint);
 }
-.chip{display:inline-flex; align-items:center; gap:7px; color:var(--ok); font-weight:500}
-.dot{width:8px; height:8px; border-radius:50%; background:var(--ok); flex:none;
-  box-shadow:0 0 0 3px var(--ok-soft)}
-@media (prefers-reduced-motion:no-preference){
-  .dot{animation:pulse 2.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--ok-soft)}50%{box-shadow:0 0 0 6px transparent}}
+.sec h2{
+  margin:0; font:inherit; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--fg);
 }
-.status .meta{color:var(--faint)}
-.status .meta b{color:var(--muted); font-weight:500}
+.sec h2 span{color:var(--faint); margin-right:.9em}
+.src{display:inline-flex; align-items:center; gap:7px}
+.src i{width:7px; height:7px; border-radius:50%; background:var(--faint); display:block}
+.src.live{color:var(--ok)}
+.src.live i{background:var(--ok)}
 
-/* ---- section headings ---- */
-h2{
-  font-family:var(--mono); font-size:11.5px; font-weight:600;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
-  margin:40px 0 14px;
-}
-
-/* ---- service grid ---- */
-.grid{display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}
+/* ---- bento ---- */
+.grid{display:grid; gap:12px; grid-template-columns:repeat(6,minmax(0,1fr))}
 .tile{
-  background:var(--panel); border:1px solid var(--line); border-radius:6px;
-  padding:16px 16px 14px; display:flex; flex-direction:column; gap:12px; min-width:0;
+  position:relative; isolation:isolate; overflow:hidden; min-width:0;
+  grid-column:span 2; display:flex; flex-direction:column; gap:12px;
+  background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px;
 }
-.tile-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; min-width:0}
-.tile-name{font-weight:600; font-size:15px; letter-spacing:-.01em; min-width:0;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.tile-tag{font-family:var(--mono); font-size:10.5px; color:var(--faint); flex:none}
-.tile-blurb{font-size:13px; color:var(--muted); margin:0; min-width:0}
-.metrics{display:flex; flex-wrap:wrap; gap:4px 18px; font-family:var(--mono);
-  font-variant-numeric:tabular-nums}
-.metric{display:flex; flex-direction:column; gap:1px}
-.metric .n{font-size:19px; font-weight:600; letter-spacing:-.02em; line-height:1.1}
-.metric .k{font-size:10px; color:var(--faint); letter-spacing:.06em; text-transform:uppercase}
-.spark{display:flex; align-items:flex-end; gap:2px; height:26px; min-width:0}
-.spark i{flex:1 1 0; min-width:2px; background:var(--bar); border-radius:1px 1px 0 0; display:block}
-.spark i:last-child{background:var(--bar-hi)}
-.tile-foot{font-family:var(--mono); font-size:11px; color:var(--faint);
-  display:flex; justify-content:space-between; gap:10px; min-width:0}
-.tile-foot span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.live{color:var(--ok)}
-.stale{color:var(--faint)}
+.tile::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:0;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),var(--glow),transparent 62%);
+  transition:opacity .25s;
+}
+.tile:hover::before{opacity:1}
+.tile.feature{grid-column:span 4; grid-row:span 2; padding:22px; gap:16px}
+.tile.wide{grid-column:span 4}
+.t-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px; min-width:0}
+.t-name{
+  font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.02em; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.feature .t-name{font-size:clamp(22px,3vw,30px)}
+.t-tag{font-family:var(--mono); font-size:11px; color:var(--faint); flex:none}
+.t-blurb{margin:0; font-size:14px; color:var(--muted); min-width:0; text-wrap:pretty}
+.feature .t-blurb{font-size:15.5px; max-width:52ch}
+.metrics{
+  display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:auto;
+  font-family:var(--mono); font-variant-numeric:tabular-nums;
+}
+.metric{display:flex; flex-direction:column; gap:2px}
+.metric .n{font-size:22px; font-weight:600; letter-spacing:-.03em; line-height:1.05}
+.metric .k{font-size:10.5px; color:var(--faint); letter-spacing:.08em; text-transform:uppercase}
+.feature .metric:first-child .n{
+  font-family:var(--display); font-weight:800; letter-spacing:-.05em; line-height:.9;
+  font-size:clamp(64px,11vw,124px);
+}
+.feature .metrics{align-items:flex-end; gap:8px 30px}
+.spark{display:flex; align-items:flex-end; gap:3px; height:30px; min-width:0}
+.feature .spark{height:120px; gap:4px}
+.spark i{flex:1 1 0; min-width:2px; background:var(--bar); border-radius:2px 2px 0 0; display:block}
+.spark i:last-child{background:var(--accent)}
+.t-foot{
+  display:flex; justify-content:space-between; gap:10px; min-width:0;
+  font-family:var(--mono); font-size:11.5px; color:var(--faint);
+}
+.t-foot span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.t-foot a{flex:none}
 
+/* ---- finger gap ---- */
+.gap-read{
+  font-family:var(--display); font-weight:800; font-size:44px; letter-spacing:-.04em; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.gap-read small{font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:0; color:var(--faint); margin-left:6px}
+.frame{height:8px; border-radius:4px; background:var(--bar); overflow:hidden}
+.frame i{display:block; height:100%; width:0; background:var(--accent); transition:width .25s}
+.pads{display:flex; gap:8px}
+.pad{
+  flex:1 1 0; font-family:var(--mono); font-size:13px; font-weight:600; color:var(--fg);
+  background:transparent; border:1px solid var(--line); border-radius:10px; padding:12px 0;
+  cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none;
+}
+.pad:active,.pad.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.fine{margin:0; font-family:var(--mono); font-size:11px; color:var(--faint); line-height:1.5}
+.tile.note{justify-content:center}
+.tile.note p{margin:0; font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.6; max-width:70ch}
 
 /* ---- record ---- */
-.record{display:grid; gap:0; border-top:1px solid var(--line)}
-.row{display:grid; grid-template-columns:120px 1fr; gap:4px 24px;
-  padding-block:16px; border-bottom:1px solid var(--line); align-items:start}
-.row .when{font-family:var(--mono); font-size:12px; color:var(--faint); padding-top:3px;
-  font-variant-numeric:tabular-nums}
-.row .what h3{margin:0 0 3px; font-size:15.5px; font-weight:600; letter-spacing:-.01em}
-.row .what .org{font-size:13px; color:var(--muted); margin:0 0 7px}
-.row .what p{margin:0; font-size:14px; color:var(--muted); max-width:66ch}
-.row .what p + p{margin-top:7px}
-.row .what em{font-style:normal; color:var(--fg)}
-@media (max-width:560px){ .row{grid-template-columns:1fr; gap:2px} .row .when{padding-top:0} }
+.row{
+  display:grid; grid-template-columns:150px minmax(0,1fr); gap:4px 28px;
+  padding-block:20px; border-bottom:1px solid var(--line); align-items:start;
+}
+.when{font-family:var(--mono); font-size:12.5px; color:var(--faint); padding-top:5px; font-variant-numeric:tabular-nums}
+.what h3{margin:0 0 2px; font-family:var(--display); font-weight:700; font-size:20px; letter-spacing:-.02em; text-wrap:balance}
+.what .org{margin:0 0 9px; font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.what p{margin:0; font-size:14.5px; color:var(--muted); max-width:68ch}
+.what p + p{margin-top:8px}
+.what em{font-style:normal; color:var(--fg)}
 
 /* ---- footer ---- */
-footer{margin-top:40px; padding-top:20px; border-top:1px solid var(--line);
-  display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center;
-  font-family:var(--mono); font-size:12px; color:var(--faint)}
-footer a{font-weight:500}
-.note{margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--faint); max-width:70ch}
-
-button.print{
-  font-family:var(--mono); font-size:12px; font-weight:500; color:var(--accent);
-  background:transparent; border:1px solid currentColor; border-radius:3px;
-  padding:3px 10px; cursor:pointer;
+footer{
+  margin-top:clamp(34px,6vw,60px);
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px;
+  font-family:var(--mono); font-size:12.5px; color:var(--faint);
 }
-button.print:hover{background:var(--accent-soft)}
-button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4.4vw,38px); letter-spacing:-.03em; color:var(--fg); flex:1 1 100%; overflow-wrap:anywhere}
 .print-only{display:none}
+
+/* ---- narrower screens ---- */
+@media (max-width:900px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tile{grid-column:span 1}
+  .tile.feature,.tile.wide{grid-column:span 2; grid-row:auto}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .tile,.tile.feature,.tile.wide{grid-column:span 1}
+  .row{grid-template-columns:minmax(0,1fr); gap:2px}
+  .when{padding-top:0}
+}
+
+/* ---- motion, only when the reader allows it ---- */
+@media screen and (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both; animation-delay:calc(var(--i,0)*70ms)}
+  @keyframes rise{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+  h1 .blk{animation:blink 1.3s steps(2,jump-none) infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .src.live i{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+}
 
 /* ---- printed / saved as PDF ---- */
 @media print{
   :root{
     --bg:#fff; --panel:#fff; --line:#c7cad0; --fg:#000; --muted:#2b2e33; --faint:#555b63;
-    --accent:#000; --accent-soft:#fff; --ok:#000; --ok-soft:#fff; --bar:#c2c6cb; --bar-hi:#6a7077;
+    --accent:#6a7077; --accent-ink:#fff; --link:#000; --mark:transparent; --ok:#000; --bar:#c2c6cb;
     color-scheme:light;
   }
   @page{margin:14mm}
-  body{background:#fff; color:#000; font-size:10.4pt; line-height:1.48}
-  .wrap{max-width:none; padding-block:0 0; padding-left:0; padding-right:0}
-  header{padding-block:0 12px}
-  h1{font-size:21pt}
-  .role{font-size:10.6pt; max-width:none}
-  h2{margin:16px 0 7px; font-size:9pt}
-  .status{padding-block:9px}
-  .dot{animation:none; box-shadow:none; background:#000}
-  .grid{grid-template-columns:repeat(2,1fr); gap:7px}
-  .tile{padding:10px 11px 9px; gap:8px}
-  .tile-blurb{font-size:9.4pt}
-  .metric .n{font-size:14pt}
-  .row{padding-block:11px}
-  .tile, .row, .spark{break-inside:avoid; page-break-inside:avoid}
-  h2{break-after:avoid; page-break-after:avoid}
-  a{color:#000; border-bottom:0}
+  body{background:#fff; color:#000; font-size:10.4pt; line-height:1.46}
+  body::before{display:none}
+  .wrap{max-width:none; padding:0}
+  .topbar{padding-block:0 6px}
+  .chip{background:transparent; color:#000; padding:0}
+  header{padding-block:4px 10px}
+  h1{font-size:25pt; letter-spacing:-.03em; margin-bottom:8px}
+  h1 .blk{display:none}
+  .role{font-size:10.6pt; max-width:none; margin-bottom:8px}
+  .links a{border:0; padding:0 10px 0 0; background:transparent}
+  .sec{margin:14px 0 8px; padding-bottom:5px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px}
+  .tile,.tile.feature,.tile.wide{grid-column:span 1; grid-row:auto; padding:10px 11px; gap:7px; border-radius:6px}
+  .tile.note{grid-column:span 2}
+  .t-name,.feature .t-name{font-size:12pt}
+  .t-blurb,.feature .t-blurb{font-size:9.4pt; max-width:none}
+  .metric .n,.feature .metric:first-child .n{font-family:var(--mono); font-size:14pt; font-weight:600; letter-spacing:-.02em; line-height:1.1}
+  .spark,.feature .spark{height:22px; gap:2px}
+  .row{padding-block:10px; grid-template-columns:110px minmax(0,1fr)}
+  .what h3{font-size:12pt}
+  .what p{font-size:10pt; max-width:none}
+  .tile,.row,.spark{break-inside:avoid; page-break-inside:avoid}
+  .sec{break-after:avoid; page-break-after:avoid}
+  footer{margin-top:14px}
+  footer .mail{font-size:11pt; flex:0 0 auto}
   .no-print{display:none !important}
   .print-only{display:block}
-  footer{margin-top:18px; padding-top:10px}
 }
 </style>
-
+</head>
+<body>
 <div class="wrap">
 
+  <div class="topbar">
+    <div class="left">
+      <span class="handle">t3chnicallyinclined</span>
+      <span>Brooklyn, NY <span id="clock"></span></span>
+    </div>
+    <div class="right">
+      <button type="button" class="ghost no-print" id="themebtn" aria-label="Switch colour theme">theme</button>
+      <span class="chip"><i></i>Open to work</span>
+    </div>
+  </div>
+
   <header>
-    <h1>Tristan Rega</h1>
-    <p class="role">Twenty years in infrastructure and enterprise support. Most recently
+    <h1 class="rise">Tristan Rega<span class="blk" aria-hidden="true"></span></h1>
+    <p class="role rise" style="--i:1">Twenty years in infrastructure and enterprise support. Most recently
       <b>first-line production support for around sixty banking clients</b> on a cloud-native core
       banking platform, holding production on-call with break-glass access into regulated
       environments. I build and run LLM systems on my own time, and that is the work I want more of.</p>
-    <div class="ident">
-      <span>Brooklyn, NY</span>
-      <span class="sep">/</span>
-      <a href="mailto:tristech@gmail.com">tristech@gmail.com</a>
-      <span class="sep">/</span>
+    <div class="links rise" style="--i:2">
       <a href="https://github.com/t3chnicallyinclined">github.com/t3chnicallyinclined</a>
-      <span class="sep">/</span>
       <a href="https://www.linkedin.com/in/tristech">linkedin.com/in/tristech</a>
+      <a href="mailto:tristech@gmail.com">tristech@gmail.com</a>
     </div>
   </header>
 
-  <div class="status">
-    <span class="chip"><span class="dot"></span><span id="availability">Open to work</span></span>
-    <span class="meta">last push <b id="lastpush">—</b></span>
-    <span class="meta">tracked repositories <b id="repocount">6</b></span>
-    <span class="meta" id="source">reading github.com/t3chnicallyinclined…</span>
+  <div class="sec">
+    <h2><span>01</span>Shipping</h2>
+    <span>last push <b id="lastpush"></b></span>
+    <span class="src" id="source"><i></i>reading the GitHub API</span>
   </div>
 
-  <h2>Shipping</h2>
-  <div class="grid" id="grid"></div>
-  <p class="note" id="note">Counts come from the GitHub REST API when you load this page: stars,
-    per-release asset downloads, and the date of the most recent release. Bars show downloads per
-    release, oldest to newest. If GitHub rate-limits your browser the page falls back to the last
-    figures I recorded, and says so.</p>
+  <div class="grid">
+    <article class="tile feature rise" style="--i:1" data-repo="GP2040-CE-NOBD"></article>
+    <article class="tile rise" style="--i:2" data-repo="nobd-desktop"></article>
 
-  <h2>The record</h2>
+    <article class="tile rise no-print" style="--i:3" id="gap">
+      <div class="t-top"><span class="t-name">Finger gap</span><span class="t-tag">the problem NOBD fixes</span></div>
+      <div class="gap-read"><span id="gapn">0.0</span><small>ms apart</small></div>
+      <div class="frame" aria-hidden="true"><i id="gapbar"></i></div>
+      <p class="t-blurb" id="gapmsg">Press two keys at the same moment, or tap both pads. Nobody's fingers land together.</p>
+      <div class="pads">
+        <button type="button" class="pad" data-pad="a">A</button>
+        <button type="button" class="pad" data-pad="b">B</button>
+      </div>
+      <p class="fine">A browser's clock is coarser than a controller's. This is an illustration, not a measurement.</p>
+    </article>
+
+    <article class="tile rise" style="--i:4" data-repo="supergun-releases"></article>
+    <article class="tile rise" style="--i:5" data-repo="mvc2-oracle"></article>
+    <article class="tile rise" style="--i:6" data-repo="ai-visualized"></article>
+    <article class="tile rise" style="--i:7" data-repo="mvc2-skin-studio"></article>
+
+    <article class="tile wide note rise" style="--i:8">
+      <p>Counts come from the GitHub REST API when you load this page: stars, per-release asset
+        downloads, and the date of the most recent release. Bars show downloads per release, oldest
+        to newest. If GitHub rate-limits your browser the page falls back to the last figures I
+        recorded, and says so.</p>
+    </article>
+  </div>
+
+  <div class="sec"><h2><span>02</span>Record</h2><span>2006 to 2026</span></div>
+
   <div class="record">
 
     <div class="row">
-      <div class="when">2021 — 2026</div>
+      <div class="when">2021 – 2026</div>
       <div class="what">
         <h3>Cloud Support Engineer II</h3>
         <p class="org">Thought Machine · cloud-native core banking</p>
@@ -222,7 +360,7 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
           client integration questions against the platform API.</p>
         <p>I asked for more scope and major incident management was what was open. I gathered the
           scattered internal practice into one framework, checked it against industry practice, and
-          <em>extended the existing severity and escalation model to cover majors</em> — declaration
+          <em>extended the existing severity and escalation model to cover majors</em>: declaration
           criteria, role definitions, a RACI model. Then I built the automation behind it across
           incident.io, Slack and Twilio, with per-incident Drive provisioning, wrote the Confluence
           runbook and ran dry runs. Three stages of buy-in to executive sign-off.
@@ -231,7 +369,7 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     </div>
 
     <div class="row">
-      <div class="when">2018 — 2021</div>
+      <div class="when">2018 – 2021</div>
       <div class="what">
         <h3>Infrastructure Administrator / Cloud Architect</h3>
         <p class="org">Graphite Financial · contract</p>
@@ -241,7 +379,7 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     </div>
 
     <div class="row">
-      <div class="when">2015 — 2018</div>
+      <div class="when">2015 – 2018</div>
       <div class="what">
         <h3>Network Administrator / Senior Support Engineer</h3>
         <p class="org">BuildingLink</p>
@@ -252,7 +390,7 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     </div>
 
     <div class="row">
-      <div class="when">2012 — 2015</div>
+      <div class="when">2012 – 2015</div>
       <div class="what">
         <h3>Network Administrator</h3>
         <p class="org">CSDNet</p>
@@ -262,13 +400,13 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     </div>
 
     <div class="row">
-      <div class="when">2006 — 2010</div>
+      <div class="when">2006 – 2010</div>
       <div class="what">
         <h3>Solutions Specialist / Network Analyst</h3>
         <p class="org">CARR, a Xerox Company</p>
         <p>Sat with businesses, asked enough questions to understand how their paperwork actually
           moved, then proposed what to automate: document capture, OCR, routing, approval workflows.
-          Twenty years later that is still how I start anything — the hard part is rarely the build,
+          Twenty years later that is still how I start anything. The hard part is rarely the build;
           it is asking enough questions to know what should be built.</p>
       </div>
     </div>
@@ -276,10 +414,10 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
   </div>
 
   <footer>
-    <button type="button" class="print no-print" id="printbtn">Print / Save as PDF</button>
+    <span class="mail">tristech@gmail.com</span>
+    <button type="button" class="ghost no-print" id="printbtn">Print / Save as PDF</button>
     <a href="https://github.com/t3chnicallyinclined">GitHub</a>
     <a href="https://www.linkedin.com/in/tristech">LinkedIn</a>
-    <a href="mailto:tristech@gmail.com">tristech@gmail.com</a>
     <span class="print-only" id="printstamp"></span>
   </footer>
 
@@ -294,8 +432,8 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
   // Fallbacks are the real figures recorded 2026-11-16, used only if GitHub refuses the browser.
   var TRACKED = [
     { repo: "GP2040-CE-NOBD", name: "NOBD firmware",
-      blurb: "Controller firmware fixing a dropped simultaneous two-button press at 1000 Hz polling. In use by competitive players.",
-      show: ["stars", "downloads", "releases"],
+      blurb: "Your stick updates at 1000 Hz and the game reads at 60. Press two buttons a few milliseconds apart and the read can land between them, so one chord becomes two presses. This is controller firmware that groups them onto the same frame. In use by competitive players.",
+      show: ["downloads", "releases", "stars"],
       fb: { stars: 24, downloads: 1070, releases: 26, tag: "v0.7.12-nobd-29", at: "2026-11-16" } },
 
     { repo: "nobd-desktop", name: "nobd-desktop",
@@ -306,22 +444,22 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     { repo: "supergun-releases", name: "SUPERGUN",
       blurb: "Rollback-netcode arcade shell: a lifted game running on Pi, desktop and WebAssembly from the player's own files.",
       show: ["releases", "downloads"],
-      fb: { stars: 0, downloads: 0, releases: 36, tag: "", at: "2026-09-15" } },
+      fb: { stars: 0, downloads: 3, releases: 1, tag: "v0.3.2", at: "2026-09-15" } },
 
     { repo: "mvc2-oracle", name: "mvc2-oracle",
       blurb: "Live memory reading for a 2000-era arcade title: reverse-engineered struct layout, read from a running process.",
       show: ["stars", "releases"],
-      fb: { stars: 3, downloads: 0, releases: 0, tag: "", at: "2026-09-02" } },
+      fb: { stars: 3, downloads: 0, releases: 0, tag: "", at: "2026-09-01" } },
 
     { repo: "ai-visualized", name: "AI Visualized",
       blurb: "Six real language models running in a browser with every number on screen. Built because the gap between what people think these systems do and what they do is what stalls adoption.",
       show: ["releases", "stars"],
-      fb: { stars: 0, downloads: 0, releases: 0, tag: "", at: "2026-11-11" } },
+      fb: { stars: 0, downloads: 0, releases: 2, tag: "v2.0-the-show", at: "2026-10-28" } },
 
     { repo: "mvc2-skin-studio", name: "mvc2-skin-studio",
       blurb: "Sprite and palette tooling built on the same reverse-engineering work, packaged for people who are not engineers.",
       show: ["stars", "releases"],
-      fb: { stars: 2, downloads: 0, releases: 0, tag: "", at: "2026-07-25" } }
+      fb: { stars: 2, downloads: 0, releases: 1, tag: "v0.1.0", at: "2026-07-24" } }
   ];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -357,73 +495,66 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
   }
 
-  // Render immediately from fallbacks so the page is complete at rest, then upgrade in place.
-  function render(items, live) {
-    $("grid").innerHTML = items.map(function (t) {
-      var d = t.data;
-      var cells = t.show.map(function (k) {
-        if (k === "stars") {
-          if (!d.stars) return "";
-          return '<div class="metric"><span class="n">' + fmt(d.stars) +
-                 '</span><span class="k">stars</span></div>';
-        }
-        if (k === "downloads") {
-          if (!d.downloads) return "";
-          return '<div class="metric"><span class="n">' + fmt(d.downloads) +
-                 '</span><span class="k">downloads</span></div>';
-        }
-        if (!d.releases) return "";
-        return '<div class="metric"><span class="n">' + fmt(d.releases) +
-               '</span><span class="k">releases</span></div>';
-      }).join("");
+  var LABEL = { stars: ["star", "stars"], downloads: ["download", "downloads"], releases: ["release", "releases"] };
 
-      var spark = "";
-      if (d.series && d.series.length > 1) {
-        var max = Math.max.apply(null, d.series) || 1;
-        spark = '<div class="spark" aria-hidden="true">' + d.series.map(function (v) {
-          return '<i style="height:' + Math.max(8, Math.round((v / max) * 100)) + '%"></i>';
-        }).join("") + "</div>";
-      }
+  function fill(it) {
+    var el = document.querySelector('[data-repo="' + it.repo + '"]');
+    if (!el) return;
+    var d = it.data;
 
-      var right = d.tag ? esc(d.tag) : (d.at ? "updated" : "");
-      return '<article class="tile">' +
-        '<div class="tile-head"><span class="tile-name">' + esc(t.name) + '</span>' +
-        '<span class="tile-tag">' + right + "</span></div>" +
-        '<p class="tile-blurb">' + esc(t.blurb) + "</p>" +
-        (cells ? '<div class="metrics">' + cells + "</div>" : "") +
-        spark +
-        '<div class="tile-foot"><span>' +
-          (d.at ? (d.tag ? "released " : "pushed ") + onDate(d.at) : "") +
-        '</span><a href="https://github.com/' + USER + "/" + esc(t.repo) + '">' +
-          esc(t.repo) + "</a></div>" +
-        "</article>";
+    var cells = it.show.map(function (k) {
+      if (!d[k]) return "";
+      return '<div class="metric"><span class="n">' + fmt(d[k]) +
+             '</span><span class="k">' + LABEL[k][d[k] === 1 ? 0 : 1] + "</span></div>";
     }).join("");
 
-    $("repocount").textContent = items.length;
-    $("source").innerHTML = live
-      ? '<span class="live">live from the GitHub API</span>'
-      : '<span class="stale">GitHub unavailable — showing figures recorded 16 Nov 2026</span>';
+    var spark = "";
+    if (d.series && d.series.length > 1) {
+      var max = Math.max.apply(null, d.series) || 1;
+      spark = '<div class="spark" aria-hidden="true">' + d.series.map(function (v) {
+        return '<i style="height:' + Math.max(7, Math.round((v / max) * 100)) + '%"></i>';
+      }).join("") + "</div>";
+    }
+
+    el.innerHTML =
+      '<div class="t-top"><span class="t-name">' + esc(it.name) + "</span>" +
+      '<span class="t-tag">' + (d.tag ? esc(d.tag) : "") + "</span></div>" +
+      '<p class="t-blurb">' + esc(it.blurb) + "</p>" +
+      (cells ? '<div class="metrics">' + cells + "</div>" : "") +
+      spark +
+      '<div class="t-foot"><span>' +
+        (d.at ? (d.tag ? "released " : "pushed ") + onDate(d.at) : "") +
+      '</span><a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' +
+        esc(it.repo) + " ↗</a></div>";
   }
 
+  function source(live) {
+    var el = $("source");
+    if (!el) return;
+    el.className = live ? "src live" : "src";
+    el.innerHTML = "<i></i>" + (live
+      ? "live from the GitHub API"
+      : "GitHub unavailable, showing figures recorded 16 Nov 2026");
+  }
+
+  // The page is complete at rest from the recorded figures, then upgrades in place.
   var items = TRACKED.map(function (t) {
     return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show,
              data: { stars: t.fb.stars, downloads: t.fb.downloads, releases: t.fb.releases,
                      tag: t.fb.tag, at: t.fb.at, series: null } };
   });
-  render(items, false);
-  $("lastpush").textContent = ago("2026-11-16");
-  $("built").textContent = "";
+  items.forEach(fill);
+  if ($("lastpush")) $("lastpush").textContent = ago("2026-11-16");
 
   json("https://api.github.com/users/" + USER + "/repos?per_page=100&sort=pushed")
     .then(function (repos) {
       var by = {};
-      repos.forEach(function (r) { by[r.name] = r; });
-
       var newest = null;
       repos.forEach(function (r) {
+        by[r.name] = r;
         if (!newest || new Date(r.pushed_at) > new Date(newest)) newest = r.pushed_at;
       });
-      if (newest) $("lastpush").textContent = ago(newest);
+      if (newest && $("lastpush")) $("lastpush").textContent = ago(newest);
 
       return Promise.all(items.map(function (it) {
         var r = by[it.repo];
@@ -441,22 +572,92 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
             it.data.downloads = total;
             it.data.tag = rels[0].tag_name || "";
             it.data.at = rels[0].published_at || it.data.at;
-            if (total > 0) it.data.series = series.slice(-24);
+            if (total > 0) it.data.series = series.slice(-26);
             return it;
           })
           .catch(function () { return it; });
       }));
     })
-    .then(function () { render(items, true); })
-    .catch(function () { /* fallbacks already on screen, and labelled */ });
+    .then(function () { items.forEach(fill); source(true); })
+    .catch(function () { source(false); });
 
-  // Print / Save as PDF. The stamp dates the printed copy, so a saved PDF says how current it is.
+  // ---- finger gap: how far apart two "simultaneous" presses really land ----
+  var FRAME_MS = 1000 / 60;
+  var first = null;
+  function press(id, t) {
+    if (first && first.id !== id && t - first.t < 150) { showGap(t - first.t); first = null; return; }
+    first = { id: id, t: t };
+  }
+  function showGap(ms) {
+    var n = $("gapn"), bar = $("gapbar"), msg = $("gapmsg");
+    if (!n || !bar || !msg) return;
+    var pct = Math.min(100, Math.round((ms / FRAME_MS) * 100));
+    n.textContent = ms.toFixed(1);
+    bar.style.width = pct + "%";
+    if (ms < 0.1) {
+      msg.textContent = "Closer together than this browser's clock can tell apart. Try again.";
+    } else if (ms >= FRAME_MS) {
+      msg.textContent = "More than one 60 Hz frame apart. A game reading once per frame sees two separate presses.";
+    } else {
+      msg.textContent = "A game reading once every 16.67 ms would catch only the first button about " +
+        pct + "% of the time.";
+    }
+  }
+  window.addEventListener("keydown", function (e) {
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    press("k:" + e.code, e.timeStamp);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".pad"), function (p) {
+    p.addEventListener("pointerdown", function (e) {
+      press("p:" + p.getAttribute("data-pad"), e.timeStamp);
+      p.classList.add("on");
+      setTimeout(function () { p.classList.remove("on"); }, 140);
+    });
+  });
+
+  // ---- tile spotlight follows the pointer ----
+  Array.prototype.forEach.call(document.querySelectorAll(".tile"), function (t) {
+    t.addEventListener("pointermove", function (e) {
+      var r = t.getBoundingClientRect();
+      t.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      t.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  });
+
+  // ---- Brooklyn clock ----
+  function tick() {
+    var el = $("clock");
+    if (!el) return;
+    try {
+      el.textContent = "· " + new Date().toLocaleTimeString("en-US",
+        { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
+    } catch (e) { el.textContent = ""; }
+  }
+  tick();
+  setInterval(tick, 30000);
+
+  // ---- theme: follows the system until the reader chooses ----
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+  } catch (e) {}
+  var tb = $("themebtn");
+  if (tb) tb.addEventListener("click", function () {
+    var cur = root.getAttribute("data-theme") ||
+      (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    var next = cur === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+  });
+
+  // ---- print: the stamp dates the copy, so a saved PDF says how current it is ----
   function stamp() {
     var el = $("printstamp");
     if (!el) return;
     el.textContent = "Printed " + new Date().toLocaleDateString("en-US",
       { year: "numeric", month: "long", day: "numeric" }) +
-      " · live figures from github.com/" + USER + " · tristech@gmail.com";
+      " · live figures from github.com/" + USER;
   }
   stamp();
   window.addEventListener("beforeprint", stamp);
@@ -464,3 +665,5 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
   if (pb) pb.addEventListener("click", function () { window.print(); });
 })();
 </script>
+</body>
+</html>
