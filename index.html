@@ -177,7 +177,7 @@ h1 .blk{
   font-family:var(--mono); font-size:11.5px; color:var(--faint);
 }
 .t-foot span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
-.t-foot a{flex:none}
+.t-foot .t-links{flex:none; display:flex; gap:12px; overflow:visible}
 
 /* ---- finger gap ---- */
 .gap-read{
@@ -432,12 +432,12 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
 
   // Fallbacks are the real figures recorded 2026-11-16, used only if GitHub refuses the browser.
   var TRACKED = [
-    { repo: "GP2040-CE-NOBD", name: "NOBD firmware",
+    { repo: "GP2040-CE-NOBD", name: "NOBD firmware", plan: "main",
       blurb: "Your stick updates at 1000 Hz and the game reads at 60. Press two buttons a few milliseconds apart and the read can land between them, so one chord becomes two presses. This is controller firmware that groups them onto the same frame. In use by competitive players.",
       show: ["downloads", "releases", "stars"],
       fb: { stars: 24, downloads: 1070, releases: 26, tag: "v0.7.12-nobd-29", at: "2026-11-16" } },
 
-    { repo: "nobd-desktop", name: "nobd-desktop",
+    { repo: "nobd-desktop", name: "nobd-desktop", plan: "master",
       blurb: "The same fix in software, so nobody has to flash firmware or buy a board. One Rust implementation covers Windows and Linux.",
       show: ["downloads", "releases", "stars"],
       fb: { stars: 3, downloads: 497, releases: 8, tag: "v0.7.1", at: "2026-09-02" } },
@@ -447,7 +447,7 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       show: ["releases", "downloads"],
       fb: { stars: 0, downloads: 3, releases: 1, tag: "v0.3.2", at: "2026-09-15" } },
 
-    { repo: "mvc2-oracle", name: "mvc2-oracle",
+    { repo: "mvc2-oracle", name: "mvc2-oracle", plan: "master",
       blurb: "Live memory reading for a 2000-era arcade title: reverse-engineered struct layout, read from a running process.",
       show: ["stars", "releases"],
       fb: { stars: 3, downloads: 0, releases: 0, tag: "", at: "2026-09-01" } },
@@ -457,7 +457,7 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       show: ["releases", "stars"],
       fb: { stars: 0, downloads: 0, releases: 2, tag: "v2.0-the-show", at: "2026-10-28" } },
 
-    { repo: "mvc2-skin-studio", name: "mvc2-skin-studio",
+    { repo: "mvc2-skin-studio", name: "mvc2-skin-studio", plan: "master",
       blurb: "Sprite and palette tooling built on the same reverse-engineering work, packaged for people who are not engineers.",
       show: ["stars", "releases"],
       fb: { stars: 2, downloads: 0, releases: 1, tag: "v0.1.0", at: "2026-07-24" } }
@@ -525,8 +525,10 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       spark +
       '<div class="t-foot"><span>' +
         (d.at ? (d.tag ? "released " : "pushed ") + onDate(d.at) : "") +
-      '</span><a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' +
-        esc(it.repo) + " ↗</a></div>";
+      '</span><span class="t-links">' +
+        (it.plan ? '<a href="https://github.com/' + USER + "/" + esc(it.repo) + "/blob/" + esc(it.plan) +
+                   '/docs/FLOORPLAN.md" title="How this repository is laid out">floorplan</a>' : "") +
+        '<a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' + esc(it.repo) + " ↗</a></span></div>";
   }
 
   function source(live) {
@@ -540,7 +542,7 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
 
   // The page is complete at rest from the recorded figures, then upgrades in place.
   var items = TRACKED.map(function (t) {
-    return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show,
+    return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show, plan: t.plan,
              data: { stars: t.fb.stars, downloads: t.fb.downloads, releases: t.fb.releases,
                      tag: t.fb.tag, at: t.fb.at, series: null } };
   });
