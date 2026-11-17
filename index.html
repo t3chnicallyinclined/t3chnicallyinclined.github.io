@@ -442,10 +442,10 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       show: ["downloads", "releases", "stars"],
       fb: { stars: 3, downloads: 497, releases: 8, tag: "v0.7.1", at: "2026-09-02" } },
 
-    { repo: "supergun-releases", name: "SUPERGUN",
-      blurb: "Rollback-netcode arcade shell: a lifted game running on Pi, desktop and WebAssembly from the player's own files.",
-      show: ["releases", "downloads"],
-      fb: { stars: 0, downloads: 3, releases: 1, tag: "v0.3.2", at: "2026-09-15" } },
+    { repo: "supergun-releases", name: "SUPERGUN", site: "https://supergun.io",
+      blurb: "Rollback-netcode arcade shell: a lifted game running on Pi, desktop and WebAssembly from the player's own files. Current builds ship from supergun.io and update themselves.",
+      show: [],
+      fb: { stars: 0, downloads: 0, releases: 0, tag: "", at: "" } },
 
     { repo: "mvc2-oracle", name: "mvc2-oracle", plan: "master",
       blurb: "Live memory reading for a 2000-era arcade title: reverse-engineered struct layout, read from a running process.",
@@ -528,7 +528,10 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
       '</span><span class="t-links">' +
         (it.plan ? '<a href="https://github.com/' + USER + "/" + esc(it.repo) + "/blob/" + esc(it.plan) +
                    '/docs/FLOORPLAN.md" title="How this repository is laid out">floorplan</a>' : "") +
-        '<a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' + esc(it.repo) + " ↗</a></span></div>";
+        (it.site
+          ? '<a href="' + esc(it.site) + '">' + esc(it.site.replace(/^https?:\/\//, "")) + " ↗</a>"
+          : '<a href="https://github.com/' + USER + "/" + esc(it.repo) + '">' + esc(it.repo) + " ↗</a>") +
+        "</span></div>";
   }
 
   function source(live) {
@@ -542,7 +545,7 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
 
   // The page is complete at rest from the recorded figures, then upgrades in place.
   var items = TRACKED.map(function (t) {
-    return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show, plan: t.plan,
+    return { repo: t.repo, name: t.name, blurb: t.blurb, show: t.show, plan: t.plan, site: t.site,
              data: { stars: t.fb.stars, downloads: t.fb.downloads, releases: t.fb.releases,
                      tag: t.fb.tag, at: t.fb.at, series: null } };
   });
@@ -561,6 +564,7 @@ footer .mail{font-family:var(--display); font-weight:700; font-size:clamp(22px,4
 
       return Promise.all(items.map(function (it) {
         var r = by[it.repo];
+        if (it.site) return it;   // its numbers live on its own site, not in a GitHub release
         if (r) { it.data.stars = r.stargazers_count; it.data.at = r.pushed_at; it.data.tag = ""; }
         return json("https://api.github.com/repos/" + USER + "/" + it.repo + "/releases?per_page=100")
           .then(function (rels) {
