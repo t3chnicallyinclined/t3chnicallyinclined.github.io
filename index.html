@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 
 <style>
-/* Layout: a status board — identity strip, live service grid, method panel, record. */
+/* Layout: a status board — identity strip, live service grid, record. */
 :root{
   --bg:#f6f7f9;
   --panel:#ffffff;
@@ -112,13 +112,6 @@ h2{
 .live{color:var(--ok)}
 .stale{color:var(--faint)}
 
-/* ---- method ---- */
-.method{display:grid; gap:0; border:1px solid var(--line); border-radius:6px;
-  background:var(--panel); overflow:hidden}
-.method div{padding:13px 16px; border-bottom:1px solid var(--line); font-size:14.5px}
-.method div:last-child{border-bottom:0}
-.method b{font-weight:600}
-.method span{color:var(--muted)}
 
 /* ---- record ---- */
 .record{display:grid; gap:0; border-top:1px solid var(--line)}
@@ -169,9 +162,8 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
   .tile{padding:10px 11px 9px; gap:8px}
   .tile-blurb{font-size:9.4pt}
   .metric .n{font-size:14pt}
-  .method div{padding:8px 11px; font-size:10pt}
   .row{padding-block:11px}
-  .tile, .row, .method div, .spark{break-inside:avoid; page-break-inside:avoid}
+  .tile, .row, .spark{break-inside:avoid; page-break-inside:avoid}
   h2{break-after:avoid; page-break-after:avoid}
   a{color:#000; border-bottom:0}
   .no-print{display:none !important}
@@ -212,20 +204,6 @@ button.print:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
     per-release asset downloads, and the date of the most recent release. Bars show downloads per
     release, oldest to newest. If GitHub rate-limits your browser the page falls back to the last
     figures I recorded, and says so.</p>
-
-  <h2>How I work</h2>
-  <div class="method">
-    <div><b>Start from what changed.</b> <span>Most breaks follow a change — a renewal, a rotation,
-      a deploy, an edited config. Evidence and documentation to an assumption, then confirm it
-      before anyone acts.</span></div>
-    <div><b>Cut scope until it can be tested.</b> <span>Two platforms I can test this week beat five
-      I can't.</span></div>
-    <div><b>Check what already exists before building it again.</b> <span>In our own stack first,
-      then outside it.</span></div>
-    <div><b>Do the cheap reversible thing first.</b> <span>The expensive safeguard waits until the
-      evidence asks for it.</span></div>
-    <div><b>Use real inputs, and change one thing at a time.</b></div>
-  </div>
 
   <h2>The record</h2>
   <div class="record">
